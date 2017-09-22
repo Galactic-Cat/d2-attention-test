@@ -1,0 +1,23 @@
+th:not(:first-child):not(:last-child) {
+    padding: 1px 5px;
+} th:first-child {
+    padding-right: 5px;
+} th:last-child {
+    padding-left: 5px;
+}
+
+.input-number, .input-char {
+    max-width: 70px;
+    text-align: center;
+}
+
+body {
+    margin: 0;
+}
+
+html {
+    width: 100vw;
+    height: 100vh;
+    overflow-x: hidden;
+    background-color: #212121;
+}

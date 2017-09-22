@@ -2,22 +2,100 @@
 <html>
     <head>
         <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>d2 Attention Test</title>
         <link rel="stylesheet" href="./src/external/material-components-web/material-components-web.min.css">
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-        <link rel="stylesheet" href="./src/css/main.css" type="text/css" />
+        <link rel="stylesheet" href="./src/css/master.css?v=3" type="text/css" />
+
+        <link rel="apple-touch-icon" sizes="57x57" href="./src/icon/apple-icon-57x57.png">
+        <link rel="apple-touch-icon" sizes="60x60" href="./src/icon/apple-icon-60x60.png">
+        <link rel="apple-touch-icon" sizes="72x72" href="./src/icon/apple-icon-72x72.png">
+        <link rel="apple-touch-icon" sizes="76x76" href="./src/icon/apple-icon-76x76.png">
+        <link rel="apple-touch-icon" sizes="114x114" href="./src/icon/apple-icon-114x114.png">
+        <link rel="apple-touch-icon" sizes="120x120" href="./src/icon/apple-icon-120x120.png">
+        <link rel="apple-touch-icon" sizes="144x144" href="./src/icon/apple-icon-144x144.png">
+        <link rel="apple-touch-icon" sizes="152x152" href="./src/icon/apple-icon-152x152.png">
+        <link rel="apple-touch-icon" sizes="180x180" href="./src/icon/apple-icon-180x180.png">
+        <link rel="icon" type="image/png" sizes="192x192"  href="./src/icon/android-icon-192x192.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="./src/icon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="96x96" href="./src/icon/favicon-96x96.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="./src/icon/favicon-16x16.png">
+        <link rel="manifest" href="/manifest.json">
+        <meta name="msapplication-TileColor" content="#ffffff">
+        <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+        <meta name="theme-color" content="#ffffff">
     </head>
     <body class="mdc-typography">
         
         <!-- Main Content -->
         <main>
-            <div class="mdc-elevation--z3" style="margin: 50px auto; width: 500px; padding: 10px; text-align: center; background-color: rgba(0, 0, 0, 0.05);">
-                <h1 class="mdc-typography--title">d2 Attention Test <i class="material-icons" style="float: right; cursor: pointer;">settings</i></h1>
+            <div class="mdc-elevation--z3" style="margin: 50px auto; max-width: 500px; padding: 10px; text-align: center; background-color: #FAFAFA;">
+                <h1 class="mdc-typography--title">d2 Attention Test <i id="settings-btn" class="material-icons" style="float: right; cursor: pointer;">settings</i></h1>
                 <hr>
-                <div class="mdc-textfield" data-mdc-auto-init="MDCTextfield" style="margin-top: 0; min-width: 200px;">
-                    <input type="number" id="difficulty" class="mdc-textfield__input" min="1" max="10" />
-                    <label for="difficulty" class="mdc-textfield__label">Difficulty Level</label>
-                </div><br>
+                <div id="settings-div" style="display: none;">
+                    <div>
+                        <h1 class="mdc-typography--subheading1">Letters:</h1>
+                        <table style="margin: 0 auto;">
+                            <thead>
+                                <th>Letter</th><th>Enabled</th><th>Correct</th><th>Stripes</th><th>Remove</th>
+                            </thead>
+                            <tbody id="lettertable">
+                                
+                            </tbody>
+                        </table>
+                        <button type="button" id="addLetter" class="mdc-button mdc-button--raised mdc-button--primary mdc-ripple" data-mdc-auto-init="MDCRipple">Add Letter</button>
+                        <br>
+                        <h1 class="mdc-typography--subheading2">Stripe Variation:</h1>
+                        <h1 class="mdc-typography--body1" style="text-align: left;">Top stripes:</h1>
+                        <div id="stripeslider-top" class="mdc-slider mdc-slider--discrete" tabindex="0" role="slider" aria-valuemin="0" aria-valuemax="5" aria-valuenow="2" aria-label="Stripes Top">
+                            <div class="mdc-slider__track-container">
+                            <div class="mdc-slider__track"></div>
+                            </div>
+                            <div class="mdc-slider__thumb-container">
+                                <div class="mdc-slider__pin">
+                                    <span class="mdc-slider__pin-value-marker"></span>
+                                </div>
+                                <svg class="mdc-slider__thumb" width="21" height="21">
+                                    <circle cx="10.5" cy="10.5" r="7.875"></circle>
+                                </svg>
+                                <div class="mdc-slider__focus-ring"></div>
+                            </div>
+                        </div>
+                        <h1 class="mdc-typography--body1" style="text-align: left;">Bottom stripes:</h1>
+                        <div id="stripeslider-bottom" class="mdc-slider mdc-slider--discrete" tabindex="0" role="slider" aria-valuemin="0" aria-valuemax="5" aria-valuenow="2" aria-label="Stripes Top">
+                            <div class="mdc-slider__track-container">
+                            <div class="mdc-slider__track"></div>
+                            </div>
+                            <div class="mdc-slider__thumb-container">
+                                <div class="mdc-slider__pin">
+                                    <span class="mdc-slider__pin-value-marker"></span>
+                                </div>
+                                <svg class="mdc-slider__thumb" width="21" height="21">
+                                    <circle cx="10.5" cy="10.5" r="7.875"></circle>
+                                </svg>
+                                <div class="mdc-slider__focus-ring"></div>
+                            </div>
+                        </div>
+                        <br>
+                        <h1 class="mdc-typography--subheading2">Correct ratio:</h1>
+                        <div id="correctslider" class="mdc-slider mdc-slider--discrete" tabindex="0" role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="45" aria-label="Correct ratio">
+                            <div class="mdc-slider__track-container" style="background-color: darkRed;">
+                            <div class="mdc-slider__track" style="background-color: darkGreen;"></div>
+                            </div>
+                            <div class="mdc-slider__thumb-container">
+                                <div class="mdc-slider__pin">
+                                    <span class="mdc-slider__pin-value-marker"></span>
+                                </div>
+                                <svg class="mdc-slider__thumb" width="21" height="21">
+                                    <circle cx="10.5" cy="10.5" r="7.875"></circle>
+                                </svg>
+                                <div class="mdc-slider__focus-ring"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                </div>
                 <button type="button" class="mdc-button mdc-button--raised mdc-button--primary mdc-ripple" data-mdc-auto-init="MDCRipple">Start</button>
             </div>
         </main>
@@ -27,8 +105,95 @@
         <script type="text/javascript" src="./src/external/material-components-web/material-components-web.min.js"></script>
         <script type="text/javascript">
             /* global $, mdc */
+            let letterlist = []
+            let letters = {}
+            let topslider = new mdc.slider.MDCSlider($('#stripeslider-top')[0])
+            let bottomslider = new mdc.slider.MDCSlider($('#stripeslider-bottom')[0])
+            let correctslider = new mdc.slider.MDCSlider($('#correctslider')[0])
+            
+            function Letter () {
+                this.idn = Math.floor(Math.random() * 1000)
+                this.letter
+                this.enabled = true
+                this.correct = false
+                this.stripes = 2
+                this.locked = false
+                
+                this.add = (opts) => {
+                    if (typeof opts === 'undefined') opts = {}
+                    if (typeof opts.letter === 'string') this.letter = opts.letter
+                    if (typeof opts.enabled === 'boolean') this.enabled = opts.enabled
+                    if (typeof opts.correct === 'boolean') this.correct = opts.correct
+                    if (typeof opts.stripes === 'number') this.stripes = opts.stripes
+                    if (typeof opts.locked === 'boolean') this.locked = opts.locked
+                    $('#lettertable').append('<tr name="' + this.idn + '-row"><td><input type="text" class="mdc-textfield__input input-char" name="' + this.idn + '-letter" placeholder="letter" ' + (typeof opts.letter === 'string' ? 'value="' + this.letter + '" ' : '') + (this.locked ? 'disabled ' : '') + '/></td>\
+                    <td><div class="mdc-switch' + (this.locked ? ' mdc-switch--disabled' : '') + '"><input type="checkbox" name="' + this.idn + '-enabled" class="mdc-switch__native-control" ' + (this.enabled ? 'checked ' : '') + (this.locked ? 'disabled ' : '') + '/><div class="mdc-switch__background"><div class="mdc-switch__knob"></div></div></div></td>\
+                    <td><div class="mdc-switch' + (this.locked ? ' mdc-switch--disabled' : '') + '"><input type="checkbox" name="' + this.idn + '-correct" class="mdc-switch__native-control" ' + (this.correct ? 'checked ' : '') + (this.locked ? 'disabled ' : '') + '/><div class="mdc-switch__background"><div class="mdc-switch__knob"></div></div></div></td>\
+                    <td><input type="number" class="mdc-textfield__input input-number" name="' + this.idn + '-stripes" placeholder="stripes" value="'+ (typeof opts.stripes === 'number' ? opts.stripes : '') +'" ' + (this.correct ? '' : 'disabled ') + (this.locked ? 'disabled ' : '') + '/></td>\
+                    <td><i class="material-icons" name="' + this.idn + '-remove" style="cursor: pointer;">' + (this.locked ? 'lock' : 'remove_circle') + '</i></td></tr>')
+                    $('[name="' + this.idn + '-letter"]').change(_ => {
+                        if ($('[name="' + this.idn + '-letter"]').val().length > 1) {
+                            $('[name="' + this.idn + '-letter"]').val($('[name="' + this.idn + '-letter"]').val()[0])
+                            this.letter = $('[name="' + this.idn + '-letter"]').val()
+                        } else if ($('[name="' + this.idn + '-letter"]').val().length === 1) {
+                            this.letter = $('[name="' + this.idn + '-letter"]').val()
+                        }
+                    })
+                    $('[name="' + this.idn + '-enabled"]').change(_ => {
+                        this.enabled = $('[name="' + this.idn + '-enabled"]').is(':checked')
+                    })
+                    $('[name="' + this.idn + '-correct"]').change(_ => {
+                        if ($('[name="' + this.idn + '-correct"]').is(':checked')) {
+                            this.correct = true
+                            $('[name="' + this.idn + '-stripes"]').attr('disabled', false)
+                        } else {
+                            this.correct = false
+                            $('[name="' + this.idn + '-stripes"]').attr('disabled', true)
+                        }
+                    })
+                    $('[name="' + this.idn + '-stripes"]').change(_ => {
+                        this.stripes = parseInt($('[name="' + this.idn + '-stripes"]').val(), 10)
+                    })
+                    $('[name="' + this.idn + '-remove"]').click(_ => {
+                        if (!this.locked) {
+                            let idr = parseInt($('[name="' + this.idn + '-remove"]').attr('name').split('-')[0], 10)
+                            letters[idr].remove()
+                        }
+                    })
+                }
+                this.remove = _ => {
+                    $('[name="' + this.idn + '-letter"]', '[name="' + this.idn + '-enabled"]', '[name="' + this.idn + '-correct"]', '[name="' + this.idn + '-remove"]').off()
+                    $('[name="' + this.idn + '-row"]').slideUp(200, function() { $(this).remove() })
+                    letterlist.splice(letterlist.indexOf(this.idn), 1)
+                    delete letters[this.idn]
+                }
+                
+                while (letterlist.indexOf(this.idn) !== -1) {
+                    this.idn++
+                    if (this.idn > 1000) this.idn = 1
+                }
+                letterlist.push(this.idn)
+                letters[this.idn] = this
+                return this.idn
+            }
+            
             $(document).ready(_ => {
                 mdc.autoInit()
+                let l = [new Letter(), new Letter()]
+                l[0].add({letter: 'd', enabled: true, correct: true, stripes: 2, locked: true})
+                l[1].add({letter: 'p', enabled: true, correct: false, locked: true})
+                
+                $('#settings-btn').click(_ => {
+                    $('#settings-div').slideToggle(200)
+                    topslider.layout()
+                    bottomslider.layout()
+                    correctslider.layout()
+                })
+                
+                $('#addLetter').click(_ => {
+                    let i = (new Letter()).idn
+                    letters[i].add()
+                })
             })
         </script>
     </body>
