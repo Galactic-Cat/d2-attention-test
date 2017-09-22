@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>d2 Attention Test</title>
+        <link rel="stylesheet" href="./src/external/material-components-web/material-components-web.min.css">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link rel="stylesheet" href="./src/css/main.css" type="text/css" />
+    </head>
+    <body class="mdc-typography">
+        
+        <!-- Main Content -->
+        <main>
+            <div class="mdc-elevation--z3" style="margin: 50px auto; width: 500px; padding: 10px; text-align: center; background-color: rgba(0, 0, 0, 0.05);">
+                <h1 class="mdc-typography--title">d2 Attention Test <i class="material-icons" style="float: right; cursor: pointer;">settings</i></h1>
+                <hr>
+                <div class="mdc-textfield" data-mdc-auto-init="MDCTextfield" style="margin-top: 0; min-width: 200px;">
+                    <input type="number" id="difficulty" class="mdc-textfield__input" min="1" max="10" />
+                    <label for="difficulty" class="mdc-textfield__label">Difficulty Level</label>
+                </div><br>
+                <button type="button" class="mdc-button mdc-button--raised mdc-button--primary mdc-ripple" data-mdc-auto-init="MDCRipple">Start</button>
+            </div>
+        </main>
+        
+        <!-- Scripts -->
+        <script type="text/javascript" src="./src/external/jquery/jquery.min.js"></script>
+        <script type="text/javascript" src="./src/external/material-components-web/material-components-web.min.js"></script>
+        <script type="text/javascript">
+            /* global $, mdc */
+            $(document).ready(_ => {
+                mdc.autoInit()
+            })
+        </script>
+    </body>
+</html>
