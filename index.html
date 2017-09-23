@@ -6,7 +6,7 @@
         <title>d2 Attention Test</title>
         <link rel="stylesheet" href="./src/external/material-components-web/material-components-web.min.css">
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-        <link rel="stylesheet" href="./src/css/master.css?v=3" type="text/css" />
+        <link rel="stylesheet" href="./src/css/master.css?v=9" type="text/css" />
 
         <link rel="apple-touch-icon" sizes="57x57" href="./src/icon/apple-icon-57x57.png">
         <link rel="apple-touch-icon" sizes="60x60" href="./src/icon/apple-icon-60x60.png">
@@ -28,8 +28,11 @@
     </head>
     <body class="mdc-typography">
         
+        <!-- Firebase status -->
+        <i id="firebase-status" class="material-icons">cloud_off</i>
+        
         <!-- Main Content -->
-        <main>
+        <main id="setup">
             <div class="mdc-elevation--z3" style="margin: 50px auto; max-width: 500px; padding: 10px; text-align: center; background-color: #FAFAFA;">
                 <h1 class="mdc-typography--title">d2 Attention Test <i id="settings-btn" class="material-icons" style="float: right; cursor: pointer;">settings</i></h1>
                 <hr>
@@ -48,7 +51,7 @@
                         <br>
                         <h1 class="mdc-typography--subheading2">Stripe Variation:</h1>
                         <h1 class="mdc-typography--body1" style="text-align: left;">Top stripes:</h1>
-                        <div id="stripeslider-top" class="mdc-slider mdc-slider--discrete" tabindex="0" role="slider" aria-valuemin="0" aria-valuemax="5" aria-valuenow="2" aria-label="Stripes Top">
+                        <div id="stripeslider-top" class="mdc-slider mdc-slider--discrete" tabindex="0" role="slider" aria-valuemin="0" aria-valuemax="5" aria-valuenow="3" aria-label="Stripes Top">
                             <div class="mdc-slider__track-container">
                             <div class="mdc-slider__track"></div>
                             </div>
@@ -63,7 +66,7 @@
                             </div>
                         </div>
                         <h1 class="mdc-typography--body1" style="text-align: left;">Bottom stripes:</h1>
-                        <div id="stripeslider-bottom" class="mdc-slider mdc-slider--discrete" tabindex="0" role="slider" aria-valuemin="0" aria-valuemax="5" aria-valuenow="2" aria-label="Stripes Top">
+                        <div id="stripeslider-bottom" class="mdc-slider mdc-slider--discrete" tabindex="0" role="slider" aria-valuemin="0" aria-valuemax="5" aria-valuenow="3" aria-label="Stripes Top">
                             <div class="mdc-slider__track-container">
                             <div class="mdc-slider__track"></div>
                             </div>
@@ -93,23 +96,84 @@
                                 <div class="mdc-slider__focus-ring"></div>
                             </div>
                         </div>
+                        <br>
+                        <h1 class="mdc-typography--subheading2">Screens:</h1>
+                        <div class="mdc-textfield" data-mdc-auto-init="MDCTextfield">
+                            <input type="number" class="mdc-textfield__input" min="1" max="100" value="14" id="screennumber" />
+                            <label for="screennumber" class="mdc-textfield__label">Number of screens</label>
+                        </div>
+                        <div class="mdc-textfield" data-mdc-auto-init="MDCTextfield">
+                            <input type="number" class="mdc-textfield__input" min="1" max="100" value="14" id="rownumber" />
+                            <label for="rownumber" class="mdc-textfield__label">Number of rows</label>
+                        </div>
+                        <div class="mdc-textfield" data-mdc-auto-init="MDCTextfield">
+                            <input type="number" class="mdc-textfield__input" min="1" max="100" value="47" id="columnnumber" />
+                            <label for="columnnumber" class="mdc-textfield__label">Number of columns</label>
+                        </div>
                     </div>
                     <hr>
                 </div>
-                <button type="button" class="mdc-button mdc-button--raised mdc-button--primary mdc-ripple" data-mdc-auto-init="MDCRipple">Start</button>
+                <button type="button" class="mdc-button mdc-button--raised mdc-button--primary mdc-ripple" onclick="switchMain('test0')" data-mdc-auto-init="MDCRipple">Start</button>
             </div>
         </main>
         
+        <main id='test0' style="color: white; text-align: center; display: none;">
+            <h1 class="mdc-typography--display1">The d2 test works as following:</h1>
+            <p class="mdc-typography--body2">
+                When the test starts, a letter will be shown. Above and below the letter there'll be room for multiple vertical lines.<br>
+                For each letter, you'll either have to press 'F' or 'J'.<br>
+                For the following cases, press 'F' when they're shown:<br>
+                <ul id="correctlist"></ul><br>
+                For all other cases, press 'J'.<br>
+                When you're ready, please press the 'F' or 'J' key to start.<br><br>
+                <button type="button" class="mdc-button mdc-button--raised mdc-button--accent mdc-ripple" data-mdc-auto-init="MDCRipple" onclick="switchMain('setup')">Return to Start</button>
+            </p>
+        </main>
+        
+        <main id="test1" style="display: none;">
+            <div class="testbox" style="display: flex; flex-direction: column; text-align: center;">
+                <p id="testbox-above" style="flex: 1;"></p>
+                <p id="testbox-letter" style="flex: 1;"></p>
+                <p id="testbox-below" style="flex: 1;"></p>
+            </div>
+            <div id="progress">
+                <div id="progress-bar"></div>
+            </div>
+        </main>
+        
+        <main id="testend" style="margin: 50px auto; max-width: 500px; padding: 10px; text-align: center; background-color: #FAFAFA; display: none;">
+            <h1 class="mdc-typography--title">The End</h1>
+            <p class="mdc-typography--body1">You've reached the end of the test. Well done.</p>
+        </main>
+        
+        <controller style="display: none;" stage="-1"></controller>
+        
         <!-- Scripts -->
+        <script type="text/javascript" src="https://www.gstatic.com/firebasejs/4.4.0/firebase.js"></script>
         <script type="text/javascript" src="./src/external/jquery/jquery.min.js"></script>
         <script type="text/javascript" src="./src/external/material-components-web/material-components-web.min.js"></script>
+        <script type="text/javascript" src="./src/external/mousetrap/mousetrap.min.js"></script>
+        <script type="text/javascript" src="./src/js/results.js"></script>
         <script type="text/javascript">
-            /* global $, mdc */
+            /* global $, mdc, Mousetrap, auth, signIn */
             let letterlist = []
             let letters = {}
             let topslider = new mdc.slider.MDCSlider($('#stripeslider-top')[0])
             let bottomslider = new mdc.slider.MDCSlider($('#stripeslider-bottom')[0])
             let correctslider = new mdc.slider.MDCSlider($('#correctslider')[0])
+            let item = 0
+            let answers = []
+            let list
+            
+            function switchMain (name) {
+                $('#' + name).trigger('mainswitch')
+                $('main').hide()
+                $('#' + name).show()
+            }
+            
+            function progress (p) {
+                $('#progress-bar').css('width', p + '%')
+            }
             
             function Letter () {
                 this.idn = Math.floor(Math.random() * 1000)
@@ -177,11 +241,133 @@
                 return this.idn
             }
             
+            function setStage (n) { 
+                $('controller').attr('stage', n.toString())
+                $('controller').trigger('stageswitch')
+            }
+            
+            function genList () {
+                let ratio = correctslider.value / 100
+                let truelist = []
+                for (var i = 0; i < (parseInt($('#rownumber').val(), 10) * 47); i++) {
+                    if (Math.random() <= ratio) {
+                        truelist.push(true)
+                    } else {
+                        truelist.push(false)
+                    }
+                }
+                var letterbox = {
+                    correct: {},
+                    incorrect: {}
+                }
+                Object.keys(letters).forEach((idx) => {
+                    if (letters[idx].enabled) {
+                        let key = letters[idx].letter
+                        if (letters[idx].correct) {
+                            letterbox.correct[key] = letters[idx].stripes
+                        } else {
+                            letterbox.incorrect[key] = letters[idx].stripes
+                        }
+                    }
+                })
+                var fin = []
+                console.debug('Here\'s the letterbox:\n', letterbox)
+                truelist.forEach((truth) => {
+                    let letter
+                    let watch = false
+                    if (truth) {
+                        letter = Object.keys(letterbox.correct)[Math.floor(Math.random() * (Object.keys(letterbox.correct).length))]
+                        let a = Math.floor(Math.random() * topslider.value) + 1
+                        let b = Math.floor(Math.random() * bottomslider.value) + 1
+                        while (a + b !== letterbox.correct[letter]) {
+                            let aob = Math.floor(Math.random() * 2)
+                            if (a + b < letterbox.correct[letter]) {
+                                aob === 1 ? a++ : b++
+                            } else {
+                                aob === 1 ? a-- : b--
+                            }
+                            if (a > topslider.value) {
+                                if (b < bottomslider.value) {
+                                    a--
+                                    b++
+                                } else {
+                                    console.error('Could not create magic (at max):\n', {a: a, b: b, letter: letter, letterbox: letterbox, stripes: letterbox.correct[letter]})
+                                    break
+                                }
+                            } else if (b > bottomslider.value) {
+                                if (a < topslider.value) {
+                                    a++
+                                    b--
+                                } else {
+                                    console.error('Could not create magic (at max):\n', {a: a, b: b, letter: letter, letterbox: letterbox, stripes: letterbox.correct[letter]})
+                                    break
+                                }
+                            } else if (a < 0) {
+                                if (b > 0) {
+                                    a++
+                                    b--
+                                } else {
+                                    console.error('Could not create magic (at min):\n', {a: a, b: b, letter: letter, letterbox: letterbox, stripes: letterbox.correct[letter]})
+                                    break
+                                }
+                            } else if (b < 0) {
+                                if (a > 0) {
+                                    a--
+                                    b++
+                                } else {
+                                    console.error('Could not create magic (at min):\n', {a: a, b: b, letter: letter, letterbox: letterbox, stripes: letterbox.correct[letter]})
+                                    break
+                                }
+                            }
+                        }
+                        fin.push([a, letter, b])
+                    } else {
+                        let sl = Math.floor(Math.random() * (Object.keys(letterbox.correct).length + Object.keys(letterbox.incorrect).length)) + 1
+                        console.log('sl', sl)
+                        if (sl <= Object.keys(letterbox.correct).length) {
+                            watch = true
+                            letter = Object.keys(letterbox.correct)[sl - 1]
+                        } else {
+                            letter = Object.keys(letterbox.incorrect)[sl - Object.keys(letterbox.correct).length - 1]
+                        }
+                        console.log('get word of that letter', letter)
+                        let a = Math.floor(Math.random() * topslider.value) + 1
+                        let b = Math.floor(Math.random() * bottomslider.value) + 1
+                        while (watch === true && a + b === letterbox.correct[letter]) {
+                            a = Math.floor(Math.random() * topslider.value) + 1
+                            b = Math.floor(Math.random() * bottomslider.value) + 1
+                        }
+                        fin.push([a, letter, b])
+                    }
+                })
+                return fin
+            }
+            
+            function drawSet (i) {
+                if (i >= list.length) {
+                    setStage(2)
+                } else {
+                    let draw = list[i]
+                    $('.testbox').hide()
+                    let paras = $('.testbox > p')
+                    let str = ['', '']
+                    for (let s = 0; s < draw[0]; s++) { str[0] += 'I' }
+                    for (let s = 0; s < draw[2]; s++) { str[1] += 'I' }
+                    $(paras[0]).text(str[0])
+                    $(paras[1]).text(draw[1])
+                    $(paras[2]).text(str[1])
+                    setTimeout(_ => { $('.testbox').show() }, 100)
+                    progress(Math.round(i / list.length * 10000) / 100)
+                }
+            }
+            
             $(document).ready(_ => {
                 mdc.autoInit()
                 let l = [new Letter(), new Letter()]
                 l[0].add({letter: 'd', enabled: true, correct: true, stripes: 2, locked: true})
                 l[1].add({letter: 'p', enabled: true, correct: false, locked: true})
+                let keyconfig = [Mousetrap.bind('f', _ => $('controller').trigger('seemsright')), Mousetrap.bind('j', _ => $('controller').trigger('seemswrong'))]
+                if (auth.currentUser === null) signIn()
                 
                 $('#settings-btn').click(_ => {
                     $('#settings-div').slideToggle(200)
@@ -193,6 +379,61 @@
                 $('#addLetter').click(_ => {
                     let i = (new Letter()).idn
                     letters[i].add()
+                })
+                
+                $('#test0').on('mainswitch', _ => {
+                    setStage(0)
+                    document.documentElement.webkitRequestFullScreen()
+                    $('#correctlist').empty()
+                    Object.keys(letters).forEach((key) => {
+                        if (letters[key].correct && letters[key].enabled) {
+                            $('#correctlist').append('<li>The letter <b>' + letters[key].letter + '</b> will be correct with <b>'+ letters[key].stripes + '</b> vertical lines. Press \'F\' when you see this.</li>')
+                        }
+                    })
+                })
+                
+                $('controller').on('seemsright', _ => {
+                    console.debug('F key pressed.')
+                    switch (parseInt($('controller').attr('stage'), 10)) {
+                        case 0:
+                            setStage(1)
+                            break
+                        case 1:
+                            $('controller').trigger('pressed', {pressed: true, item: item})
+                    }
+                })
+                
+                $('controller').on('seemswrong', _ => {
+                    console.debug('J key pressed.')
+                    switch (parseInt($('controller').attr('stage'), 10)) {
+                        case 0:
+                            setStage(1)
+                            break
+                        case 1:
+                            $('controller').trigger('pressed', {pressed: false, item: item})
+                    }
+                })
+                
+                $('controller').on('pressed', (event, data) => {
+                    answers.push(data)
+                    item++
+                    drawSet(item)
+                })
+                
+                $('controller').on('stageswitch', _ => {
+                    switch (parseInt($('controller').attr('stage'), 10)) {
+                        case 1:
+                            item = 0
+                            list = genList()
+                            switchMain('test1')
+                            $('#firebase-status').fadeOut(200)
+                            drawSet(0)
+                            break
+                        case 2:
+                            document.webkitExitFullscreen()
+                            $('#firebase-status').fadeIn(200)
+                            switchMain('testend')
+                    }
                 })
             })
         </script>

@@ -21,3 +21,33 @@ html {
     overflow-x: hidden;
     background-color: #212121;
 }
+
+.testbox p {
+    color: white;
+    font-size: calc(90vh / 3);
+    margin: 0;
+    min-height: calc(90vh / 3);
+    max-height: calc(90vh / 3);
+}
+
+#progress {
+    position: fixed;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.1);
+    height: 4px;
+    width: 100vw;
+}
+
+#progress-bar {
+    background-color: #FAFAFA;
+    width: 0;
+    height: 4px;
+    float: left;
+}
+
+#firebase-status {
+    color: #FAFAFA;
+    position: fixed;
+    top: 0;
+    right: 0;
+}
