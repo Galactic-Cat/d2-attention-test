@@ -1,53 +1,73 @@
 th:not(:first-child):not(:last-child) {
-    padding: 1px 5px;
+  padding: 1px 5px;
 } th:first-child {
-    padding-right: 5px;
+  padding-right: 5px;
 } th:last-child {
-    padding-left: 5px;
+  padding-left: 5px;
 }
 
 .input-number, .input-char {
-    max-width: 70px;
-    text-align: center;
+  max-width: 70px;
+  text-align: center;
 }
 
 body {
-    margin: 0;
+  margin: 0;
 }
 
 html {
-    width: 100vw;
-    height: 100vh;
-    overflow-x: hidden;
-    background-color: #212121;
+  background-color: #212121;
+  height: 100vh;
+  overflow-x: hidden;
+  width: 100vw;
 }
 
-.testbox p {
-    color: white;
-    font-size: calc(90vh / 3);
-    margin: 0;
-    min-height: calc(90vh / 3);
-    max-height: calc(90vh / 3);
+#screennumber, #rownumber, #columnnumber {
+  min-width: 150px;
+  text-align: center;
 }
 
-#progress {
-    position: fixed;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.1);
-    height: 4px;
-    width: 100vw;
+#setup .mdc-typography--subheading1 {
+  margin-bottom: 0;
 }
 
-#progress-bar {
-    background-color: #FAFAFA;
-    width: 0;
-    height: 4px;
-    float: left;
+.firebase-status {
+  color: #FAFAFA;
+  cursor: pointer;
+  position: fixed;
+  right: 20px;
+  top: 20px;
 }
 
-#firebase-status {
-    color: #FAFAFA;
-    position: fixed;
-    top: 0;
-    right: 0;
+.firebase-console {
+  background-color: #FAFAFA;
+  padding: 10px;
+  position: fixed;
+  right: 20px;
+  top: 64px;
+}
+
+.testbox tr {
+  background-color: rgba(0, 0, 0, 0.1);
+  display: block;
+  margin: 5px 0;
+}
+
+.testbox td {
+  background-color: rgba(0, 0, 0, 0.1);
+  color: white;
+  display: inline-block;
+  height: 60px;
+  margin: 4px;
+  text-align: center;
+  width: 40px;
+} .testbox td:not([sel="true"]):hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+} .testbox td[sel="true"] {
+  background-color: #FAFAFA;
+  color: black;
+} .testbox td[sel="true"]:hover {
+  background-color: #FFFFFF;
+  cursor: pointer;
 }
