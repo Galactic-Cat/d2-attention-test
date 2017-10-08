@@ -71,3 +71,10 @@ html {
   background-color: #FFFFFF;
   cursor: pointer;
 }
+
+.notice-warning {
+  border-left: 4px solid #EED202; /* Safety Yellow */
+  color: #EED202; /* Safety Yellow */
+  padding-left: 6px;
+  text-align: left;
+}
