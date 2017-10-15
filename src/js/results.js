@@ -45,11 +45,45 @@ function signOut () {
   })
 }
 
-function genResults (result) {}
+var userdata = {
+  post: _ => {
+    database.ref('users/' + auth.currentUser.uid).update({
+      gender: userdata.gender,
+      age: userdata.age
+    })
+  }
+}
 
-function postResult (result) {
-  let resultString = genResults(result)
-  database.ref('results/' + auth.currentUser.uid).set(resultString)
+function Result (opts) {
+  this.uid = auth.currentUser.uid
+  this.state = {
+    core: opts.state || 'normal',
+    set: (nstate) => {
+      if (nstate !== 'normal' && nstate !== 'hard') {
+        return false
+      } else {
+        this.state.core = nstate
+        this.ref = database.ref('results/' + this.state.core).push()
+        return nstate
+      }
+    }
+  }
+  this.ref = database.ref('results/' + this.state.core).push()
+  this.result = {
+    core: undefined,
+    set: (res) => {
+      this.result.core = res[0] + '::' + res[1] + '::' + res[2]
+    }
+  }
+  this.post = _ => {
+    database.ref('results/' + this.state.core + '/' + this.ref).set(this.result).then(_ => {
+      database.ref('users/' + this.uid + '/results/' + this.ref).set(this.state.core)
+      console.debug('Results posted to firebase, under', this.state.core, 'with ref', this.ref)
+    }).catch((err) => {
+      alert('Results failed to save.')
+      console.error('Could not post results to firebase:\n', err.message)
+    })
+  }
 }
 
 auth.onAuthStateChanged((user) => {
@@ -60,10 +94,32 @@ auth.onAuthStateChanged((user) => {
       $('.firebase-signinpanel').hide()
       if (user.isAnonymous) {
         $('.firebase-email').text('Anonymous')
+        $('#newUser').show()
       } else {
         $('.firebase-email').text(user.email)
+        $('#newUser').hide()
       }
       $('.firebase-uid').text(user.uid)
+      database.ref('users/' + auth.currentUser.uid).once('value').then((data) => {
+        data = data.val()
+        if (data != null) {
+          let check = 0
+          if (data.gender === 'male') {
+            $('#gender-female').prop('checked', false)
+            $('#gender-male').prop('checked', true)
+            check++
+          } else if (data.gender === 'female') {
+            $('#gender-male').prop('checked', false)
+            $('#gender-female').prop('checked', true)
+            check++
+          }
+          if (typeof data.age === 'number') {
+            $('#age').val(data.age)
+            check++
+          }
+          if (check >= 2) $('#startButton').prop('disabled', false)
+        }
+      })
     } else {
       $('.firebase-status').text('cloud_queue')
       $('.firebase-email, .firebase-uid').text('')
@@ -77,3 +133,5 @@ $('button[signin]').click(function () { signIn($(this).attr('signin')) })
 $('#signOut').click(_ => signOut())
 
 $('.firebase-status').click(_ => $('.firebase-console').fadeToggle(200))
+
+if (Result) {}

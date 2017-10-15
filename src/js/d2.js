@@ -1,4 +1,4 @@
-/* global $, correctslider, topslider, bottomslider, letters, switchMain, Image */
+/* global $, correctslider, topslider, bottomslider, letters, switchMain, Image, NormalDistribution, pyro */
 
 function progressbar (p) {
   $('#progress-bar').css('width', p + '%')
@@ -173,37 +173,57 @@ function Test () {
     calculateResult: (result) => {
       // let all = this.info.screens * this.info.rows * this.info.columns
       if (typeof result[0] === 'undefined') {
-        let cs = result.correct - (result.wrong + result.missed)
-        let ps = result.last
-        let er = Math.floor((result.wrong + result.missed) / result.last * 1000) / 10
+        let cs = result.correct - (result.wrong.total + result.missed.total)
+        let ps = result.correct
+        let er = Math.floor((result.wrong.total + result.missed.total) / result.correct * 1000) / 10
         return [cs, ps, er]
       } else if (typeof result === 'object') {
-        let overAll = {correct: 0, wrong: 0, missed: 0, last: 0}
+        let overAll = {cs: 0, ps: 0, er: 0}
         result.forEach((res, i) => {
-          overAll.correct = Math.round((overAll.correct * i + res.correct) / (i + 1))
-          overAll.wrong = Math.round((overAll.wrong * i + res.wrong) / (i + 1))
-          overAll.missed = Math.round((overAll.missed * i + res.missed) / (i + 1))
-          overAll.last = Math.round((overAll.last * i + res.last) / (i + 1))
+          overAll.cs += res[0]
+          overAll.ps += res[1]
+          overAll.er = (overAll.er * i + res.er) / (i + 1)
         })
-        let cs = overAll.correct - (overAll.wrong + overAll.missed)
-        let ps = overAll.last
-        let er = Math.floor((overAll.wrong + overAll.missed) / result.last * 1000) / 10
-        return [cs, ps, er]
+        return [overAll.cs, overAll.ps, overAll.er]
       } else {
         console.error('Could not calculate result for this result:\n', result)
         return false
       }
     },
+    calculateScore: (type, input) => {
+      let scale = new NormalDistribution(50, 10)
+      let mean
+      let stdv
+      switch (type) {
+        case 'cs':
+          mean = 166.5919421
+          stdv = 132.04025
+          break
+        case 'ps':
+          mean = 232.9227844
+          stdv = 184.61387
+          break
+        case 'er':
+          mean = 0.836808639
+          stdv = 0.50118052
+      }
+      let ndis = new NormalDistribution(mean, stdv)
+      let zscr = ndis.zScore(input)
+      console.debug('Score calculated for', type, 'being:', scale.cdf(zscr))
+      return scale.cdf(zscr)
+    },
     gatherResults: _ => {
       let counter = []
       this.info.test.forEach((scr, s) => {
-        counter.push({correct: 0, wrong: 0, missed: 0, last: 0})
+        counter.push({correct: 0, wrong: {beflast: 0, total: 0}, missed: {beflast: 0, total: 0}, last: 0})
         console.debug('Plotting last for screen', s)
         let last = $('#' + this.core.calcid(s) + ' td[sel="true"]')
+        let lastn
         if (last[0] === undefined) {
           last = 0
         } else {
           last = last[last.length - 1]
+          lastn = parseInt($(last).attr('id').split('-')[1], 10)
           last = parseInt($(last).attr('id').split('-')[1], 10) - (s * this.info.rows * this.info.columns)
         }
         counter[s].last = last
@@ -214,11 +234,17 @@ function Test () {
               if (sel) {
                 counter[s].correct++
               } else {
-                counter[s].missed++
+                if (lastn >= parseInt($('#' + this.core.calcid(s, r, c)).attr('id').split('-')[1], 10)) {
+                  counter[s].missed.beflast++
+                }
+                counter[s].missed.total++
               }
             } else {
               if (sel) {
-                counter[s].wrong++
+                if (lastn >= parseInt($('#' + this.core.calcid(s, r, c)).attr('id').split('-')[1], 10)) {
+                  counter[s].wrong.beflast++
+                }
+                counter[s].wrong.total++
               }
             }
           })
@@ -268,18 +294,23 @@ function Test () {
   }
 
   this.end = _ => {
-    document.webkitExitFullscreen()
+    document.webkitCancelFullScreen()
     $('.firebase-status').fadeIn(200)
     switchMain('testend')
     let results = this.core.gatherResults()
+    let resl = []
     results.forEach((result, s) => {
       let res = this.core.calculateResult(result)
+      resl.push(res)
       $('#resultstable').append('<tr><td>Screen ' + (s + 1) + '</td><td>' + res[0] + '</td><td>' + res[1] + '</td><td>' + res[2] + '%</td></tr>')
     })
-    let res = this.core.calculateResult(results)
+    let res = this.core.calculateResult(resl)
+    pyro.result.set(res)
+    pyro.post()
     $('#resultstable').append('<tr><td>Over All</td><td>' + res[0] + '</td><td>' + res[1] + '</td><td>' + res[2] + '</td></tr>')
-    let x = this.canvas.positionX(res[1])
-    let y = this.canvas.positionY(res[2])
+    let score = [this.core.calculateScore('cs', res[0]), this.core.calculateScore('ps', res[1]), this.core.calculateScore('er', res[2])]
+    let x = this.canvas.positionX(score[1])
+    let y = this.canvas.positionY(score[2])
     console.debug('Drawing a lovely rectangle at', x, y)
     this.canvas.ctx.fillRect(x, y, x + 2, y + 2)
     console.debug('Results are finished. Storing them is yet disabled.')
