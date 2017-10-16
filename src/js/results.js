@@ -47,10 +47,24 @@ function signOut () {
 
 var userdata = {
   post: _ => {
-    database.ref('users/' + auth.currentUser.uid).update({
-      gender: userdata.gender,
-      age: userdata.age
-    })
+    if (userdata.gender === undefined || userdata.age === undefined) {
+      if (userdata.gender === undefined && $('#gender-male, #gender-female').is(':checked') === false) {
+        alert('Please reselect your gender.')
+      } else {
+        if ($('#gender-male').is(':checked')) userdata.gender = 'male'
+        if ($('#gender-female').is(':checked')) userdata.gender = 'female')
+      }
+      if (userdata.age === undefined && $('#age').val() === '') {
+        alert('Please re-enter your age.')
+      } else {
+        userdata.age = parseInt($('#age').val(), 10)
+      }
+    } else {
+      database.ref('users/' + auth.currentUser.uid).update({
+        gender: userdata.gender,
+        age: userdata.age
+      })
+    }
   }
 }
 
