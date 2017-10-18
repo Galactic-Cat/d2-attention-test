@@ -11,9 +11,9 @@ var config = {
 }
 firebase.initializeApp(config)
 
-let database = firebase.database()
-let auth = firebase.auth()
-let providerGoogle = new firebase.auth.GoogleAuthProvider()
+var database = firebase.database()
+var auth = firebase.auth()
+var providerGoogle = new firebase.auth.GoogleAuthProvider()
 
 function signIn (agent) {
   if (agent === 'google') {
