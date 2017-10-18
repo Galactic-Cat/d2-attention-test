@@ -91,8 +91,8 @@ function Result (opts) {
   }
   this.post = _ => {
     console.debug('<results.js>\nPosting results to reference: \'results/' + this.state.core + '/' + this.ref, 'With result:', this.result)
-    database.ref('results/' + this.state.core + '/' + this.ref).set(this.result).then(_ => {
-      database.ref('users/' + this.uid + '/results/' + this.ref).set(this.state.core)
+    database.ref('results/' + this.state.core).set({this.ref: this.result}).then(_ => {
+      database.ref('users/' + this.uid + '/results').set({this.ref: this.state.core})
       console.debug('Results posted to firebase, under', this.state.core, 'with ref', this.ref)
     }).catch((err) => {
       alert('Results failed to save.')
