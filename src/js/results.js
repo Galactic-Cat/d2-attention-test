@@ -52,7 +52,7 @@ var userdata = {
         alert('Please reselect your gender.')
       } else {
         if ($('#gender-male').is(':checked')) userdata.gender = 'male'
-        if ($('#gender-female').is(':checked')) userdata.gender = 'female')
+        if ($('#gender-female').is(':checked')) userdata.gender = 'female'
       }
       if (userdata.age === undefined && $('#age').val() === '') {
         alert('Please re-enter your age.')
