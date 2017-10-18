@@ -1,4 +1,4 @@
-/* global $, correctslider, topslider, bottomslider, letters, switchMain, Image, NormalDistribution, pyro */
+/* global $, correctslider, Gaussian, topslider, bottomslider, letters, switchMain, Image, pyro */
 
 function progressbar (p) {
   $('#progress-bar').css('width', p + '%')
@@ -39,23 +39,33 @@ function generateTest (info) {
 
   // Generate CorrectList
   let correctList = []
-  for (var i = 0; i < screens * rows * columns; i++) {
-    let trueOrFalse = Math.floor(Math.random() * 100) + 1
-    if (trueOrFalse <= correctslider.value) {
-      correctList.push(true)
-    } else {
-      correctList.push(false)
+  let correctval = Math.round(columns * (correctslider.value / 100))
+  console.debug('<d2.js>\nCorrectval is', correctval)
+  for (let s = 0; s < screens * rows; s++) {
+    let rawlist = []
+    for (let c = 0; c < correctval; c++) {
+      rawlist.push(true)
     }
+    for (let f = 0; f < columns - correctval; f++) {
+      rawlist.push(false)
+    }
+    for (let i = rawlist.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [rawlist[i], rawlist[j]] = [rawlist[j], rawlist[i]]
+    }
+    correctList = correctList.concat(rawlist)
   }
+  console.debug('<d2.js>\nCorrectList is', correctList)
 
   // Generate final data array
   let fin = []
-  for (var s = 0; s < screens; s++) {
+  for (let s = 0; s < screens; s++) {
     fin.push([])
-    for (var r = 0; r < rows; r++) {
+    for (let r = 0; r < rows; r++) {
       fin[s].push([])
-      for (var c = 0; c < columns; c++) {
-        let correctIndex = (s + 1) * (r + 1) * (c + 1) - 1
+      for (let c = 0; c < columns; c++) {
+        let correctIndex = s * rows * columns + r * columns + c
+        // console.debug('CorrectList returned', correctList[correctIndex], 'for index', correctIndex, '(s:', s + '; r:', r + '; c:', c + ')')
         if (correctList[correctIndex]) {
           let letter = Object.keys(letterbox.correct)[Math.floor(Math.random() * Object.keys(letterbox.correct).length)]
           let top = Math.floor(Math.random() * (topStripes + 1))
@@ -142,10 +152,10 @@ function Test () {
     canvas: $('#resultCanvas')[0],
     image: new Image(),
     positionX: (score) => {
-      return (39 + (score - 20) * 6.65) - 1
+      return (39 + (score - 20) * 6.65) - 2
     },
     positionY: (score) => {
-      return (400 - (score - 20) * 6.65) - 1
+      return (400 - (score - 20) * 6.65) - 2
     }
   }
   this.canvas.ctx = this.canvas.canvas.getContext('2d')
@@ -156,7 +166,6 @@ function Test () {
     this.canvas.canvas.height = this.canvas.image.height
     this.canvas.ctx.drawImage(this.canvas.image, 0, 0)
   }
-  this.canvas.fillStyle = '#FF0000'
 
   this.core = {
     calcid: (s, r, c) => {
@@ -175,15 +184,19 @@ function Test () {
       if (typeof result[0] === 'undefined') {
         let cs = result.correct - (result.wrong.total + result.missed.total)
         let ps = result.correct
-        let er = Math.floor((result.wrong.total + result.missed.total) / result.correct * 1000) / 10
+        let er = Math.round(result.correct / (result.wrong.total + result.missed.total) * 10) / 10
+        if (isNaN(er) || er === Infinity) er = 100
         return [cs, ps, er]
       } else if (typeof result === 'object') {
         let overAll = {cs: 0, ps: 0, er: 0}
         result.forEach((res, i) => {
           overAll.cs += res[0]
           overAll.ps += res[1]
-          overAll.er = (overAll.er * i + res.er) / (i + 1)
         })
+        overAll.wrong = overAll.ps - overAll.cs
+        console.debug('Overall wrong:', overAll.wrong + '. Overall right:')
+        overAll.er = Math.round(overAll.ps / overAll.wrong * 10) / 10
+        if (isNaN(overAll.er) || overAll.er === Infinity) overAll.er = 100
         return [overAll.cs, overAll.ps, overAll.er]
       } else {
         console.error('Could not calculate result for this result:\n', result)
@@ -191,26 +204,25 @@ function Test () {
       }
     },
     calculateScore: (type, input) => {
-      let scale = new NormalDistribution(50, 10)
+      let scale = new Gaussian(50, 100)
       let mean
-      let stdv
       switch (type) {
         case 'cs':
-          mean = 166.5919421
-          stdv = 132.04025
+          mean = 185.57692
           break
         case 'ps':
-          mean = 232.9227844
-          stdv = 184.61387
+          mean = 204.166666666667
           break
         case 'er':
-          mean = 0.836808639
-          stdv = 0.50118052
+          mean = 1.201923
       }
-      let ndis = new NormalDistribution(mean, stdv)
-      let zscr = ndis.zScore(input)
-      console.debug('Score calculated for', type, 'being:', scale.cdf(zscr))
-      return scale.cdf(zscr)
+      let vari = (mean / 5) * (mean / 5)
+      let ndis = new Gaussian(mean, vari)
+      console.debug('Normal Distribution for', type, '=', ndis)
+      let area = ndis.cdf(input)
+      console.debug('Area for', type, 'is', area)
+      console.debug('Final score for', type, 'is', Math.round(scale.ppf(area)))
+      return Math.round(scale.ppf(area))
     },
     gatherResults: _ => {
       let counter = []
@@ -293,7 +305,7 @@ function Test () {
     this.core.run()
   }
 
-  this.end = _ => {
+  this.end = (forceScore) => {
     document.webkitCancelFullScreen()
     $('.firebase-status').fadeIn(200)
     switchMain('testend')
@@ -302,18 +314,26 @@ function Test () {
     results.forEach((result, s) => {
       let res = this.core.calculateResult(result)
       resl.push(res)
-      $('#resultstable').append('<tr><td>Screen ' + (s + 1) + '</td><td>' + res[0] + '</td><td>' + res[1] + '</td><td>' + res[2] + '%</td></tr>')
+      $('#resultstable').append('<tr><td>Screen ' + (s + 1) + '</td><td>' + res[0] + '</td><td>' + res[1] + '</td><td>' + res[2] + '</td></tr>')
     })
-    let res = this.core.calculateResult(resl)
-    pyro.result.set(res)
+    let res = forceScore || this.core.calculateResult(resl)
+    let fin = ''
+    resl.forEach((res, i) => {
+      fin += (res[0] + '=' + res[1] + '=' + res[2])
+      if (i < res.length - 1) fin += '::'
+    })
+    pyro.result.core = fin
     pyro.post()
     $('#resultstable').append('<tr><td>Over All</td><td>' + res[0] + '</td><td>' + res[1] + '</td><td>' + res[2] + '</td></tr>')
     let score = [this.core.calculateScore('cs', res[0]), this.core.calculateScore('ps', res[1]), this.core.calculateScore('er', res[2])]
     let x = this.canvas.positionX(score[1])
     let y = this.canvas.positionY(score[2])
     console.debug('Drawing a lovely rectangle at', x, y)
-    this.canvas.ctx.fillRect(x, y, x + 2, y + 2)
-    console.debug('Results are finished. Storing them is yet disabled.')
+    this.canvas.ctx.fillStyle = '#FF0000'
+    this.canvas.ctx.fillRect(x, y, 4, 4)
+    $('#score-cs').text(Math.round(score[0]))
+    $('#score-ps').text(Math.round(score[1]))
+    $('#score-er').text(Math.round(score[2]))
   }
 }
 

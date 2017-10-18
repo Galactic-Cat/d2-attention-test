@@ -115,7 +115,7 @@
             <br>
             <hr>
             <h1 class="mdc-typography--subheading2">Correct ratio:</h1>
-            <div id="correctslider" class="mdc-slider mdc-slider--discrete" tabindex="0" role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="45" aria-label="Correct ratio">
+            <div id="correctslider" class="mdc-slider mdc-slider--discrete" tabindex="0" role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="44" aria-label="Correct ratio">
               <div class="mdc-slider__track-container" style="background-color: darkRed;">
                 <div class="mdc-slider__track" style="background-color: darkGreen;"></div>
               </div>
@@ -173,11 +173,24 @@
           <input type="number" class="mdc-textfield__input" id="age" min="1" max="100" />
           <label class="mdc-textfield__label" for="age">Age</label>
         </div>
+        <br>
+        <div class="mdc-form-field">
+          <div class="mdc-checkbox">
+            <input type="checkbox" id="isFirst" class="mdc-checkbox__native-control" />
+            <div class="mdc-checkbox__background">
+              <svg class="mdc-checkbox__checkmark" viewbox="0 0 24 24">
+                <path class="mdc-checkbox__checkmark__path" fill="none" stroke="white" d="M1.73,12.91 8.1,19.28 22.79,4.59"/>
+              </svg>
+              <div class="mdc-checkbox__mixedmark"></div>
+            </div>
+          </div>
+          <label for="isFirst">This is my first d2 test today</label>
+        </div>
         <hr>
         <button disabled type="button" id="startButton" class="mdc-button mdc-button--raised mdc-button--primary mdc-ripple" onclick="switchMain('test0')" data-mdc-auto-init="MDCRipple">Start</button>
         <br>
         <p class="notice-warning">
-          This application is still work in progress and results shouldn't be taken for granted as correctly calculated, because this is still being implemented!
+          This application is fit for testing, however scores should be taken with a grain of salt.
         </p>
       </div>
     </main>
@@ -210,7 +223,7 @@
       <h1 class="mdc-typography--title">The End</h1>
       <p class="mdc-typography--body1">You've reached the end of the test.<br>Thank you very much for participating and well done.</p>
       <hr>
-      <h1 class="mdc-typography--subheading1">Results</h1>
+      <h1 class="mdc-typography--subheading1">Numbers</h1>
       <table style="width: 100%;">
         <thead>
           <th>Context</th><th>Concentration Score</th><th>Processing Speed</th><th>Error Rate</th>
@@ -220,6 +233,28 @@
         </tbody>
       </table>
       <hr>
+      <h1 class="mdc-typography--subheading1">Scores</h1>
+      <p class="mdc-typography--body1" style="text-align: left;">
+        Scores are measured on a gaussian scale. Scores between 45 and 55 are average.<br>
+        Your accuracy (wether you're neat or sloppy) is measured by your error rate.<br>
+        Your speed is measured by your processing speed.
+      </p>
+      <table>
+        <thead>
+          <th>Category</th><th>Score</th>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Concentration Score</td><td id="score-cs"></td>
+          </tr>
+          <tr>
+            <td>Processing Speed</td><td id="score-ps"></td>
+          </tr>
+          <tr>
+            <td>Error Rate</td><td id="score-er"></td>
+          </tr>
+        </tbody>
+      </table>
       <canvas id="resultCanvas"></canvas>
       <hr>
       <button type="button" class="mdc-button mdc-button--raised mdc-button--primary mdc-ripple" data-mdc-auto-init="MDCRipple" onclick="document.location.href = document.location.href">Return to Start</button>
@@ -230,7 +265,8 @@
     <script type="text/javascript" src="./src/external/jquery/jquery.min.js"></script>
     <script type="text/javascript" src="./src/external/material-components-web/material-components-web.min.js"></script>
     <!-- <script type="text/javascript" src="./src/external/mousetrap/mousetrap.min.js"></script> -->
-    <script type="text/javascript" src="./src/external/normal-distribution/normal-distribution.js"></script>
+    <!-- <script type="text/javascript" src="./src/external/normal-distribution/normal-distribution.js"></script> -->
+    <script type="text/javascript" src="./src/js/gaussian.js"></script>
     <script type="text/javascript" src="./src/js/d2.js"></script>
     <script type="text/javascript" src="./src/js/results.js"></script>
     <script type="text/javascript">
@@ -368,7 +404,7 @@
               }
             })
             let state = $('#isHard').is(':checked') ? 'hard' : 'normal'
-            pyro = new Result({state: state})
+            pyro = new Result({state: state, first: $('#isFirst').is(':checked')})
             document.documentElement.webkitRequestFullscreen()
             test = new Test()
           })
