@@ -77,12 +77,12 @@ function Result (opts) {
         return false
       } else {
         this.state.core = nstate
-        this.ref = database.ref('results/' + this.state.core).push()
+        this.ref = database.ref('results/' + this.state.core).push().key
         return nstate
       }
     }
   }
-  this.ref = database.ref('results/' + this.state.core).push()
+  this.ref = database.ref('results/' + this.state.core).push().key
   this.result = {
     core: undefined,
     set: (res) => {
