@@ -318,9 +318,9 @@ function Test () {
     })
     let res = forceScore || this.core.calculateResult(resl)
     let fin = ''
-    resl.forEach((res, i) => {
-      fin += (res[0] + '=' + res[1] + '=' + res[2])
-      if (i < res.length - 1) fin += '::'
+    resl.forEach((ris, i) => {
+      fin += (ris[0] + '=' + ris[1] + '=' + ris[2])
+      fin += '::'
     })
     pyro.result.core = fin
     pyro.post()
