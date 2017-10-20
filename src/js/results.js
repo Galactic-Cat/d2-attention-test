@@ -71,7 +71,7 @@ var userdata = {
 function Result (opts) {
   this.uid = auth.currentUser.uid
   this.first = {
-    core: opts.first || true,
+    core: opts.first || false,
     set: (nfirst) => {
       if (typeof nfirst !== 'boolean') {
         return false
@@ -106,7 +106,8 @@ function Result (opts) {
     // let result = this.result
     console.debug('<results.js>\nPosting results to reference: \'results/' + this.state.core + '/' + this.ref, 'With result:', this.result.core)
     database.ref('results/' + this.state.core).update(bigboy).then(_ => {
-      bigboy[this.ref] = [this.state.core, this.first.core]
+      bigboy[this.ref] = {}
+      bigboy[this.ref][this.state.core] = this.first.core
       database.ref('users/' + this.uid + '/results').update(bigboy)
       console.debug('Results posted to firebase, under', this.state.core, 'with ref', this.ref)
     }).catch((err) => {
