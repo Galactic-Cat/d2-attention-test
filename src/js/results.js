@@ -102,7 +102,7 @@ function Result (opts) {
   }
   this.post = _ => {
     let bigboy = {}
-    bigboy[this.ref] = this.result.core
+    bigboy[this.ref] = this.uid + '::' + this.result.core
     // let result = this.result
     console.debug('<results.js>\nPosting results to reference: \'results/' + this.state.core + '/' + this.ref, 'With result:', this.result.core)
     database.ref('results/' + this.state.core).update(bigboy).then(_ => {
