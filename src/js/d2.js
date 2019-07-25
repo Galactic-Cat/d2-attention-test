@@ -322,8 +322,8 @@ function Test () {
       fin += (ris[0] + '=' + ris[1] + '=' + ris[2])
       fin += '::'
     })
-    pyro.result.core = fin
-    pyro.post()
+    //pyro.result.core = fin
+    //pyro.post()
     $('#resultstable').append('<tr><td>Over All</td><td>' + res[0] + '</td><td>' + res[1] + '</td><td>' + res[2] + '</td></tr>')
     let score = [this.core.calculateScore('cs', res[0]), this.core.calculateScore('ps', res[1]), this.core.calculateScore('er', res[2])]
     let x = this.canvas.positionX(score[1])

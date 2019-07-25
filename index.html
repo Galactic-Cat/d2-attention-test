@@ -29,7 +29,7 @@
   <body class="mdc-typography">
 
     <!-- Firebase status -->
-    <i class="firebase-status material-icons">cloud_queue</i>
+    <i class="firebase-status material-icons"></i>
     <div class="firebase-console" style="display: none;">
       <div class="firebase-userpanel" style="display: none;">
         <h1 class="mdc-typography--subheading1">Firebase Status:</h1>
@@ -261,14 +261,14 @@
     </main>
 
     <!-- Scripts -->
-    <script type="text/javascript" src="https://www.gstatic.com/firebasejs/4.4.0/firebase.js"></script>
+    <!-- <script type="text/javascript" src="https://www.gstatic.com/firebasejs/4.4.0/firebase.js"></script> -->
     <script type="text/javascript" src="./src/external/jquery/jquery.min.js"></script>
     <script type="text/javascript" src="./src/external/material-components-web/material-components-web.min.js"></script>
     <!-- <script type="text/javascript" src="./src/external/mousetrap/mousetrap.min.js"></script> -->
     <!-- <script type="text/javascript" src="./src/external/normal-distribution/normal-distribution.js"></script> -->
     <script type="text/javascript" src="./src/js/gaussian.js"></script>
     <script type="text/javascript" src="./src/js/d2.js"></script>
-    <script type="text/javascript" src="./src/js/results.js"></script>
+    <!-- <script type="text/javascript" src="./src/js/results.js"></script> -->
     <script type="text/javascript">
         /* global $, mdc, auth, signIn, Test, Result, userdata */
         var pyro
@@ -278,6 +278,7 @@
         let topslider = new mdc.slider.MDCSlider($('#stripeslider-top')[0])
         let bottomslider = new mdc.slider.MDCSlider($('#stripeslider-bottom')[0])
         let correctslider = new mdc.slider.MDCSlider($('#correctslider')[0])
+        let userdata = {}
 
         function switchMain (name) {
           $('#' + name).trigger('mainswitch')
@@ -352,7 +353,7 @@
           let l = [new Letter(), new Letter()]
           l[0].add({letter: 'd', enabled: true, correct: true, stripes: 2, locked: true})
           l[1].add({letter: 'p', enabled: true, correct: false, locked: true})
-          if (auth.currentUser == null) signIn()
+          //if (auth.currentUser == null) signIn()
 
           $('#settings-btn').click(_ => {
             $('#settings-div').slideToggle(200)
@@ -395,7 +396,7 @@
           })
 
           $('#test0').on('mainswitch', _ => {
-            userdata.post()
+            //userdata.post()
             $('#correcttable').empty()
             Object.keys(letters).forEach((key) => {
               let letter = letters[key]
@@ -404,7 +405,7 @@
               }
             })
             let state = $('#isHard').is(':checked') ? 'hard' : 'normal'
-            pyro = new Result({state: state, first: $('#isFirst').is(':checked')})
+            //pyro = new Result({state: state, first: $('#isFirst').is(':checked')})
             document.documentElement.webkitRequestFullscreen()
             test = new Test()
           })
